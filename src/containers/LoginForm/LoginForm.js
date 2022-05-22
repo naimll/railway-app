@@ -1,87 +1,89 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useDispatch } from "react-redux";
 import $ from "jquery";
 import "./LoginForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GoogleLogo from "../../images/google-brands.svg";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { TextField } from "@mui/material";
+import * as accountService from "../../services/accountService";
+import * as actions from "../../store/actions";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const LoginForm = () => {
-  (function ($) {
-    // validimet dhe responsiviteti
-    $(".input100").each(function () {
-      $(this).on("blur", function () {
-        if ($(this).val().trim() != "") {
-          $(this).addClass("has-val");
-        } else {
-          $(this).removeClass("has-val");
-        }
+  const dispatch = useDispatch();
+  const [errorMesages, setErrorMessages] = useState({});
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState(" ");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const history = useNavigate();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
+
+  const renderErrorMessage = (name) => {
+    name === errorMesages.name && (
+      <div className="error">{errorMesages.message}</div>
+    );
+  };
+
+  const onSubmit = (event) => {
+    setErrorMessages("");
+    setIsSubmitted(false);
+    console.log("success");
+    accountService
+      .signIn(event.email, event.password)
+      .then((response) => {
+        const data = response.data;
+        console.log(data);
+        dispatch(
+          actions.login(
+            data.id,
+            data.name,
+            data.lastname,
+            data.email,
+            data.role,
+            data.token
+          )
+        );
+        setIsLoading(true);
+        redirectTo();
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setErrorMessages(err.data || "Email or password is incorrect");
       });
-    });
 
-    var input = $(".validate-input .input100");
+    // if(data != null){
 
-    $(".validate-form").on("submit", function () {
-      var check = true;
+    // }else{
+    //   setErrorMessages(event.error);
+    // }
+  };
 
-      for (var i = 0; i < input.length; i++) {
-        if (validate(input[i]) === false) {
-          showValidate(input[i]);
-          check = false;
-        }
-      }
-
-      return check;
-    });
-
-    $(".validate-form .input100").each(function () {
-      $(this).focus(function () {
-        hideValidate(this);
-      });
-    });
-
-    function validate(input) {
-      if (
-        $(input).attr("type") === "email" ||
-        $(input).attr("name") === "email"
-      ) {
-        if (
-          $(input)
-            .val()
-            .trim()
-            .match(
-              /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/
-            ) == null
-        ) {
-          return false;
-        }
-      } else {
-        if ($(input).val().trim() === "") {
-          return false;
-        }
-      }
-    }
-
-    function showValidate(input) {
-      var thisAlert = $(input).parent();
-
-      $(thisAlert).addClass("alert-validate");
-    }
-
-    function hideValidate(input) {
-      var thisAlert = $(input).parent();
-
-      $(thisAlert).removeClass("alert-validate");
-    }
-  })($);
+  const login = (id, name, lastname, email, role, token) => {
+    localStorage.setItem("token", token);
+  };
+  const redirectTo = () => {
+    setIsLoading(false);
+    history("/success", { replace: true });
+  };
 
   return (
     <div className="limiter">
       <div className="container-login100">
         <div className="wrap-login100 ">
-          <form className="login100-form validate-form">
+          <form
+            className="login100-form validate-form"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <span className="login100-form-title p-b-49">
               Hekurudha - Login
             </span>
@@ -90,14 +92,29 @@ const LoginForm = () => {
               className="wrap-input100 validate-input m-b-23"
               data-validate="Username is required"
             >
-              <span className="label-input100">Username</span>
-              <input
-                className="input100"
+              <span className="label-input100">Email</span>
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Type your Email"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    name="email"
+                    {...field}
+                  />
+                )}
+                name="email"
                 type="text"
-                name="username"
-                placeholder="Type your username"
+                rules={{
+                  required: true,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf206;"></span>
+              {errors.email?.type === "required" && (
+                <p className="error">Please enter your Email</p>
+              )}
+              {emailError && <p className="error">{emailError}</p>}
             </div>
 
             <div

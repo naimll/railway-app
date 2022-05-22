@@ -142,7 +142,7 @@ button:hover {
 .wrap-input100 {
   width: 100%;
   position: relative;
-  border-bottom: 2px solid #d9d9d9;
+  border-bottom: none;
 }
 
 .label-input100 {
@@ -174,7 +174,9 @@ button:hover {
   left: 0;
   pointer-events: none;
 }
-
+.error {
+  color: red;
+}
 .container-login100-form-btn {
   display: -webkit-box;
   display: -webkit-flex;

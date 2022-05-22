@@ -1,140 +1,215 @@
 import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { TextField } from "@mui/material";
 import $ from "jquery";
 import "./RegisterForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GoogleLogo from "../../images/google-brands.svg";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ThemeProvider } from "@material-ui/core";
+import * as accountService from "../../services/accountService";
+import { useDispatch } from "react-redux";
+import * as actions from "../../store/actions";
 
 const RegisterForm = () => {
-  (function ($) {
-    // validimet dhe responsiviteti
-    $(".input100").each(function () {
-      $(this).on("blur", function () {
-        if ($(this).val().trim() != "") {
-          $(this).addClass("has-val");
-        } else {
-          $(this).removeClass("has-val");
-        }
+  const dispatch = useDispatch();
+  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState();
+  const [fieldRequired, setFieldRequired] = useState();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+  } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const history = useNavigate();
+
+  console.log(error, "HEYYYY");
+  const onSubmit = (data) => {
+    console.log(error, "HELLO");
+    setIsLoading(true);
+    setError("");
+    setEmailError("");
+
+    if (!isValidEmail(data.email)) {
+      setEmailError("Please enter a valid Email");
+    } else {
+      setEmailError("");
+    }
+
+    accountService
+      .signUp(data.name, data.lastname, data.email, data.password, 0)
+      .then((response) => {
+        accountService
+          .signIn(data.email, data.password, false)
+          .then((response) => {
+            const { data } = response;
+            console.log(error);
+            dispatch(
+              actions.login(
+                data.id,
+                data.name,
+                data.lastname,
+                data.email,
+                data.role,
+                data.token
+              )
+            );
+            setIsLoading(true);
+            history("/success", { replace: true });
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            setError("There was an error signing in!");
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        onSignUpFailure(err);
       });
-    });
-
-    var input = $(".validate-input .input100");
-
-    $(".validate-form").on("submit", function () {
-      var check = true;
-
-      for (var i = 0; i < input.length; i++) {
-        if (validate(input[i]) === false) {
-          showValidate(input[i]);
-          check = false;
-        }
-      }
-
-      return check;
-    });
-
-    $(".validate-form .input100").each(function () {
-      $(this).focus(function () {
-        hideValidate(this);
-      });
-    });
-
-    function validate(input) {
-      if (
-        $(input).attr("type") === "email" ||
-        $(input).attr("name") === "email"
-      ) {
-        if (
-          $(input)
-            .val()
-            .trim()
-            .match(
-              /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/
-            ) == null
-        ) {
-          return false;
-        }
-      } else {
-        if ($(input).val().trim() === "") {
-          return false;
-        }
-      }
+  };
+  const isValidEmail = (email) => {
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      email
+    );
+  };
+  const onSignUpFailure = (err) => {
+    const serverResponse = err.response;
+    if (!serverResponse) {
+      setError("Unable to connect to server");
+      return;
     }
+    setError("One or more validation errors occurred!");
 
-    function showValidate(input) {
-      var thisAlert = $(input).parent();
-
-      $(thisAlert).addClass("alert-validate");
+    const errors = err.response.data?.errors;
+    if (!errors) return;
+    const emailErrors = errors.Email;
+    if (emailErrors) {
+      setEmailError(
+        emailErrors.reduce((acc, currentError) => acc + currentError + "\n", "")
+      );
     }
-
-    function hideValidate(input) {
-      var thisAlert = $(input).parent();
-
-      $(thisAlert).removeClass("alert-validate");
-    }
-  })($);
+  };
 
   return (
     <div className="limiter">
       <div className="container-login100">
         <div className="wrap-login100 ">
-          <form className="login100-form validate-form">
+          <form
+            className="login100-form validate-form"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <span className="login100-form-title p-b-49">
               Hekurudha - Register
             </span>
 
-            <div
-              className="wrap-input100 validate-input m-b-23"
-              data-validate="First Name is required"
-            >
+            <div className="wrap-input100 validate-input m-b-23">
               <span className="label-input100">First Name</span>
-              <input
-                className="input100"
-                type="text"
-                name="firstname"
-                placeholder="Type your First Name"
+              <Controller
+                name="name"
+                control={control}
+                defaultValue=""
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField
+                    label="Type your First Name"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    {...field}
+                  />
+                )}
               />
-              <span className="focus-input100" data-symbol="&#xf206;"></span>
+              {errors.name?.type === "required" && (
+                <p className="error">Please enter your name</p>
+              )}
             </div>
-            <div
-              className="wrap-input100 validate-input m-b-23"
-              data-validate="Last Name is required"
-            >
+            <div className="wrap-input100 validate-input m-b-23">
               <span className="label-input100">Last Name</span>
-              <input
-                className="input100"
-                type="text"
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Type your Last Name"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    name="name"
+                    {...field}
+                  />
+                )}
                 name="lastname"
-                placeholder="Type your Last Name"
+                type="text"
+                rules={{
+                  required: true,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf206;"></span>
+              {errors.name?.type === "required" && (
+                <p className="error">Please enter your lastname</p>
+              )}
             </div>
             <div
               className="wrap-input100 validate-input m-b-23"
               data-validate="Email is required"
             >
               <span className="label-input100">Email</span>
-              <input
-                className="input100"
-                type="text"
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Type your Email"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    name="email"
+                    {...field}
+                  />
+                )}
                 name="email"
-                placeholder="Type your email"
+                type="text"
+                rules={{
+                  required: true,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf206;"></span>
+              {errors.email?.type === "required" && (
+                <p className="error">Please enter your Email</p>
+              )}
+              {emailError && <p className="error">{emailError}</p>}
             </div>
             <div
               className="wrap-input100 validate-input m-b-23"
               data-validate="Email is required"
             >
               <span className="label-input100">Confirm Email</span>
-              <input
-                className="input100"
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Confirm your Email"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    name="confirmEmail"
+                    {...field}
+                  />
+                )}
+                name="confirmEmail"
                 type="text"
-                name="email-confirm"
-                placeholder="Confirm your email"
+                rules={{
+                  required: true,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf206;"></span>
+              {errors.confirmEmail?.type === "required" && (
+                <p className="error">Please confirm your Email</p>
+              )}
+              {emailError && <p className="error">{emailError}</p>}
             </div>
 
             <div
@@ -142,13 +217,34 @@ const RegisterForm = () => {
               data-validate="Password is required"
             >
               <span className="label-input100">Password</span>
-              <input
-                className="input100"
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Type your password"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    type="password"
+                    name="password"
+                    {...field}
+                  />
+                )}
+                name="password"
                 type="password"
-                name="pass"
-                placeholder="Type your password"
+                rules={{
+                  required: true,
+                  minLength: 6,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf190;"></span>
+              {errors.password?.type === "required" && (
+                <p className="error">Please enter your password</p>
+              )}
+              {errors.password?.type === "minLength" && (
+                <p className="error">
+                  Password should be at least 6 characters
+                </p>
+              )}
             </div>
 
             <div className="container-login100-form-btn">
