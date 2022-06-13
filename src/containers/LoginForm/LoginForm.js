@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const [errorMesages, setErrorMessages] = useState({});
+  const [errorMessages, setErrorMessages] = useState();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState(" ");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -26,12 +26,6 @@ const LoginForm = () => {
     control,
     formState: { errors },
   } = useForm();
-
-  const renderErrorMessage = (name) => {
-    name === errorMesages.name && (
-      <div className="error">{errorMesages.message}</div>
-    );
-  };
 
   const onSubmit = (event) => {
     setErrorMessages("");
@@ -45,8 +39,8 @@ const LoginForm = () => {
         dispatch(
           actions.login(
             data.id,
-            data.name,
-            data.lastname,
+            data.firstName,
+            data.lastName,
             data.email,
             data.role,
             data.token
@@ -73,7 +67,7 @@ const LoginForm = () => {
   };
   const redirectTo = () => {
     setIsLoading(false);
-    history("/success", { replace: true });
+    history("/client", { replace: true });
   };
 
   return (
@@ -115,6 +109,7 @@ const LoginForm = () => {
                 <p className="error">Please enter your Email</p>
               )}
               {emailError && <p className="error">{emailError}</p>}
+              {errorMessages && <p className="error">{errorMessages}</p>}
             </div>
 
             <div
@@ -122,13 +117,34 @@ const LoginForm = () => {
               data-validate="Password is required"
             >
               <span className="label-input100">Password</span>
-              <input
-                className="input100"
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    label="Type your password"
+                    id="standard-basic"
+                    variant="standard"
+                    className="input100"
+                    type="password"
+                    name="password"
+                    {...field}
+                  />
+                )}
+                name="password"
                 type="password"
-                name="pass"
-                placeholder="Type your password"
+                rules={{
+                  required: true,
+                  minLength: 6,
+                }}
+                control={control}
               />
-              <span className="focus-input100" data-symbol="&#xf190;"></span>
+              {errors.password?.type === "required" && (
+                <p className="error">Please enter your password</p>
+              )}
+              {errors.password?.type === "minLength" && (
+                <p className="error">
+                  Password should be at least 6 characters
+                </p>
+              )}
             </div>
 
             <div className="text-right p-t-8 p-b-31">

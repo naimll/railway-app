@@ -8,7 +8,7 @@ export const signUp = (name, lastname, email, password, role) => {
     password,
     role,
   };
-  return axios.post("/api/v1/accounts/sign-in", data);
+  return axios.post("/api/v1/accounts/sign-up", data);
 };
 
 export const signIn = (email, password) => {

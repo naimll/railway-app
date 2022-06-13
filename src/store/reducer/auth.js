@@ -24,11 +24,19 @@ const login = (state, action) => {
     isAuthenticated: true,
   };
 };
-
+const logout = (state) => {
+  const storeVersion = localStorage.getItem("_storeVersion");
+  localStorage.clear();
+  localStorage.setItem("_storeVersion", storeVersion);
+  sessionStorage.clear();
+  return initialState;
+};
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionType.LOGIN:
       return login(state, action);
+    case actionType.LOGOUT:
+      return logout(state, action);
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "https://localhost:44312";
+const url = "https://localhost:44318";
 
 // Add a request interceptor
 export const axiosInstance = axios.create({

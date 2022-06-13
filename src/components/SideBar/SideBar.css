@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+main {
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+.main {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 30px;
+  padding: 10px;
+  display: flex;
+}
+.side-bar-elements {
+  display: flex;
+  width: 25%;
+  background-color: rgb(155, 184, 184);
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
+  border: 1px black solid;
+  border-radius: 10px;
+}
+.MuiAvatar-root {
+  margin: 1.5rem;
+}
+.side-bar-elements :nth-child() {
+  margin: 0;
+  width: 100%;
+}
+.MuiBox-root {
+  width: 90%;
+}
+.MuiBox-root button {
+  padding: 1rem;
+  margin: 1rem;
+  border-bottom: 1px solid blue;
+}
+.panel {
+  display: flex;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-left: 2rem;
+}

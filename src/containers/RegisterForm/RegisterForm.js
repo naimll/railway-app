@@ -44,7 +44,7 @@ const RegisterForm = () => {
     }
 
     accountService
-      .signUp(data.name, data.lastname, data.email, data.password, 0)
+      .signUp(data.name, data.lastname, data.email, data.password, 1)
       .then((response) => {
         accountService
           .signIn(data.email, data.password, false)
@@ -54,8 +54,8 @@ const RegisterForm = () => {
             dispatch(
               actions.login(
                 data.id,
-                data.name,
-                data.lastname,
+                data.firstName,
+                data.lastName,
                 data.email,
                 data.role,
                 data.token

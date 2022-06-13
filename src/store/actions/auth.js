@@ -9,3 +9,7 @@ export const login = (id, name, lastname, email, role, token) => ({
   role,
   token,
 });
+
+export const logout = () => ({
+  type: actionType.LOGOUT,
+});

@@ -5,9 +5,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, compose } from "redux";
 import reducers from "./store/reducer";
+import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers } from "redux";
 import { persistStore } from "redux-persist";
+import { legacy_createStore as createStore } from "redux";
 import thunk from "redux-thunk";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
@@ -17,6 +20,13 @@ const store = createStore(
   {},
   composeEnhancers(applyMiddleware(thunk))
 );
+// const store = configureStore({
+//   reducers,
+//   middleware: applyMiddleware(thunk),
+//   devTools: process.env.NODE_ENV !== "production",
+
+//   enhancers: composeEnhancers(applyMiddleware(thunk)),
+// });
 
 export const persistor = persistStore(store);
 
