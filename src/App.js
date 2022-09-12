@@ -15,21 +15,19 @@ import { Fragment } from "react";
 
 function App() {
   return (
-    <Router>
-      <main>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<LoginForm />} exact />
-          <Route path="/register" element={<RegisterForm />} exact />
-          <Route exact element={<PrivateRoute />}>
-            <Route path="/client" element={<UserDashboard />} exact />
-          </Route>
-          {/* <Fragment>
+    <main>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<LoginForm />} exact />
+        <Route path="/register" element={<RegisterForm />} exact />
+        <Route exact element={<PrivateRoute />}>
+          <Route path="/client" element={<UserDashboard />} exact />
+        </Route>
+        {/* <Fragment>
             <PrivateRoute path="/admin/:id" exact component={AdminDashboard} />
           </Fragment> */}
-        </Routes>
-      </main>
-    </Router>
+      </Routes>
+    </main>
   );
 }
 

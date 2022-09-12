@@ -12,6 +12,7 @@ import { combineReducers } from "redux";
 import { persistStore } from "redux-persist";
 import { legacy_createStore as createStore } from "redux";
 import thunk from "redux-thunk";
+import { BrowserRouter } from "react-router-dom";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 
@@ -39,11 +40,11 @@ export const persistor = persistStore(store);
 //   </React.StrictMode>
 // );
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
+  <Provider store={store}>
+    <BrowserRouter>
       <App />
-    </Provider>
-  </React.StrictMode>,
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
 

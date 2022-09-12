@@ -11,6 +11,7 @@ import Box from "@mui/material/Box";
 import "./SideBar.css";
 import { Avatar } from "@mui/material";
 import { orange } from "@mui/material/colors";
+import { Notification } from "../Notification/Notification";
 
 const SideBar = () => {
   const [value, setValue] = useState(0);
@@ -36,10 +37,8 @@ const SideBar = () => {
   const storage = localStorage.getItem("persist:root");
   const temp = JSON.parse(storage);
   const user = JSON.parse(temp.auth);
-  console.log(user.name);
   function handleChange(event, newValue) {
     setValue(newValue);
-    console.log(value);
   }
   function a11yProps(index) {
     return {
@@ -49,8 +48,12 @@ const SideBar = () => {
   }
   return (
     <>
+      <div className="bg-primary w-100 main-header text-light ">
+        <h3 className="align-middle">Client Dashboard</h3>
+        <Notification />
+      </div>
       <div className="main ">
-        <div className="side-bar-elements ">
+        <div className="side-bar-elements bg-primary">
           <Box orientation="vertical">
             <Tabs
               value={value}
