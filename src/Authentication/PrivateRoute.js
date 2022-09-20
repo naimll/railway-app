@@ -7,7 +7,7 @@ import LoginForm from "../containers/LoginForm/LoginForm";
 export const PrivateRoute = ({ ...props }) => {
   const dispatch = useDispatch();
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const role = useSelector((state) => state.auth.role);
   const isAuthenticated = () => {
     if (localStorage.getItem("token") === null) {
       return false;
@@ -22,7 +22,11 @@ export const PrivateRoute = ({ ...props }) => {
   // }
 
   return isAuthenticated() ? (
-    <Outlet {...props} />
+    role === props.role ? (
+      <Outlet {...props} />
+    ) : (
+      <Navigate to={"/"} />
+    )
   ) : (
     <Navigate to={`/login`} exact component={LoginForm} />
   );

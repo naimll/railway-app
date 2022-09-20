@@ -1,4 +1,5 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { axiosInstance as axios } from "./axiosInstance";
 
 export const connect = (accessToken) => {
   console.log(accessToken);
@@ -22,4 +23,9 @@ export const connectToUser = (accessToken, userId) => {
     )
     .withAutomaticReconnect()
     .build();
+};
+export const getUserNotification = () => {
+  return axios.get(
+    "https://localhost:44326/api/v1/notification/get-user-notification"
+  );
 };

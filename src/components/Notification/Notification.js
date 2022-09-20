@@ -8,15 +8,25 @@ import {
 
 import * as notificationService from "../../services/notificationService";
 import "react-notifications/lib/notifications.css";
+import {
+  Button,
+  CardActions,
+  CardContent,
+  Popover,
+  Typography,
+} from "@mui/material";
 export const Notification = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [connection, setConnection] = useState(null);
   const [userConnection, setUserConnection] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.id);
-  const [notification, setNotification] = useState();
+  const [notification, setNotification] = useState([]);
   const [connectionId, setConnectionId] = useState();
   useEffect(() => {
+    notificationService.getUserNotification().then((response) => {
+      setNotification(response.data);
+    });
     setConnection(notificationService.connect(token));
     setUserConnection(
       notificationService.connectToUser(token, userId.toString())
@@ -39,7 +49,9 @@ export const Notification = () => {
           // connection.start().then((result) => {
           connection.on("ReceiveBroadcast", (test) => {
             NotificationManager.info(test.body, test.subject);
-            console.log(test);
+            // setNotification([...notification, test]);
+            notification.push(test);
+            console.log(notification);
           });
           // });
           // connection.invoke("send", "woooooo").catch(function (err) {
@@ -79,18 +91,22 @@ export const Notification = () => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   return (
     <>
-      <button className="btn-icon notify" onClick={handleClick}>
+      <button
+        className="btn-icon notify d-flex justify-content-end m-3"
+        onClick={handleClick}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="13.489"
-          height="15.003"
+          width="24.489"
+          height="30.003"
           viewBox="0 0 13.489 15.003"
         >
           <g id="Group_1301" data-name="Group 1301" transform="translate(0 -1)">
@@ -108,6 +124,35 @@ export const Notification = () => {
           </g>
         </svg>
       </button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        className="mw-50"
+      >
+        {notification.map((item, i) => {
+          return (
+            <>
+              <CardContent className="mb-0 pb-0">
+                <Typography color="text.secondary" className="text-primary">
+                  {item.subject}
+                </Typography>
+                <Typography variant="body2">{item.body}</Typography>
+              </CardContent>
+              <CardActions className="border-bottom-1 mt-0">
+                <Button size="small" className="border-bottom-1">
+                  Learn More
+                </Button>
+              </CardActions>
+            </>
+          );
+        })}
+      </Popover>
 
       <NotificationContainer />
     </>

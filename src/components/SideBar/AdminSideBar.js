@@ -20,10 +20,9 @@ import { useNavigate } from "react-router-dom";
 import * as actions from "../../store/actions";
 import MainMenu from "../MainMenu/MainMenu";
 
-const SideBar = () => {
+const AdminSideBar = () => {
   const [value, setValue] = useState(0);
   const name1 = useSelector((state) => state.auth.name);
-
   const dispatch = useDispatch();
   const storage = localStorage.getItem("persist:root");
   const temp = JSON.parse(storage);
@@ -45,7 +44,7 @@ const SideBar = () => {
   const handleLogout = () => {
     // mainStore.setToken("");
     dispatch(actions.logout());
-    navigate("/login");
+    navigate("/sign-in");
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -118,4 +117,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default AdminSideBar;

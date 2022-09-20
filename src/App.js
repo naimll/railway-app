@@ -12,20 +12,37 @@ import UserDashboard from "./containers/UserDashboard/UserDashboard";
 import AdminDashboard from "./containers/AdminDashboard/AdminDashboard";
 import RegisterForm from "./containers/RegisterForm/RegisterForm";
 import { Fragment } from "react";
+import AddAttraction from "./components/Attraction/AddAttraction";
+import { useSelector } from "react-redux";
 
 function App() {
+  const role = useSelector((state) => state.auth.role);
+  console.log(role);
   return (
     <main>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route
+          path="/"
+          element={
+            role === "Admin" ? (
+              <Navigate to="/admin" />
+            ) : (
+              <Navigate to="/client" />
+            )
+          }
+        />
         <Route path="/login" element={<LoginForm />} exact />
         <Route path="/register" element={<RegisterForm />} exact />
-        <Route exact element={<PrivateRoute />}>
+        <Route exact element={<PrivateRoute role="Client" />}>
           <Route path="/client" element={<UserDashboard />} exact />
         </Route>
-        {/* <Fragment>
-            <PrivateRoute path="/admin/:id" exact component={AdminDashboard} />
-          </Fragment> */}
+        <Route exact element={<PrivateRoute role="Admin" />}>
+          <Route path="/admin" element={<AdminDashboard />} exact />
+        </Route>
+
+        <Route exact element={<PrivateRoute role="Admin" />}>
+          <Route path="/add-attraction" element={<AddAttraction />} exact />
+        </Route>
       </Routes>
     </main>
   );
