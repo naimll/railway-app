@@ -4,6 +4,8 @@ import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as actions from "../../store/actions";
+import * as notificationService from "../../services/notificationService";
+import { useEffect } from "react";
 
 const MainMenu = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,12 @@ const MainMenu = () => {
     dispatch(actions.logout());
     navigate("/login");
   };
+  useEffect(() => {
+    notificationService.getUserNotification().then((response) => {
+      console.log(response.data);
+    });
+  }, []);
+
   const handleClose = () => {
     setAnchorEl(null);
   };

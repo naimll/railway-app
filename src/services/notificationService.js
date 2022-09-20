@@ -1,5 +1,5 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { axiosInstance as axios } from "./axiosInstance";
+import { axiosNotification as axios } from "./axiosNotification";
 
 export const connect = (accessToken) => {
   console.log(accessToken);
@@ -25,7 +25,5 @@ export const connectToUser = (accessToken, userId) => {
     .build();
 };
 export const getUserNotification = () => {
-  return axios.get(
-    "https://localhost:44326/api/v1/notification/get-user-notification"
-  );
+  return axios.get("/api/v1/notification/get-user-notification");
 };

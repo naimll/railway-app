@@ -15,7 +15,6 @@ const AttractionList = () => {
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const role = useSelector((state) => state.auth.role);
-  console.log(role);
   const cols = [
     {
       field: "attractionName",

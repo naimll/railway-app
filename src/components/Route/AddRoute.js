@@ -2,14 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // import { makeStyles } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import * as yup from "yup";
 import MainMenu from "../MainMenu/MainMenu";
-// import { yupResolver } from "@hookform/resolvers/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as travelService from "../../services/TravelService";
 
-const AddAttraction = () => {
+const AddRoute = () => {
   const [loading, setIsLoading] = useState(false);
   let navigate = useNavigate();
   const [attraction, setAttraction] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState({
+    label: "",
+    value: "",
+  });
+  const [stations, setStations] = useState([]);
+
+  const handleChangeStatus = (event) => {
+    setValue("statusAPID", event.value);
+    setSelectedStatus(event);
+  };
 
   const schema = yup.object({
     description: yup
@@ -24,9 +36,13 @@ const AddAttraction = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    // resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
   });
-  useEffect(() => {}, []);
+  useEffect(() => {
+    travelService.getStationSelect().then((response) => {
+      setStations(response.data);
+    });
+  }, []);
 
   const onSubmit = (event) => {
     setIsLoading(true);
@@ -37,7 +53,7 @@ const AddAttraction = () => {
       <MainMenu />
       <div className="form-container card-rounded-1 m-4 mt-5">
         <div className="form-header bg-primary rounded-3 p-3 ">
-          <h3 className="text-light"> Add new Attraction</h3>
+          <h3 className="text-light"> Add new Route</h3>
         </div>
 
         <div className="card rounded-2 mt-2">
@@ -47,15 +63,32 @@ const AddAttraction = () => {
                 <div className="col-lg-4 mb-5">
                   <div className="form-group">
                     <label>
-                      <strong>Attraction Name</strong>
+                      <strong>Start Station</strong>
+                      <span className="text-danger fw-bold">*</span>
+                    </label>
+                    <Select
+                      {...register("statusAPID")}
+                      options={stations}
+                      onChange={handleChangeStatus}
+                      className="rounded-0"
+                    />
+                    <span className="text-danger">
+                      {errors.statusAPID?.message}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-lg-4 mb-5">
+                  <div className="form-group">
+                    <label>
+                      <strong>Station Name</strong>
                       <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("attractionName")}
-                      name="attractionName"
-                      placeholder="Attraction Name"
+                      {...register("stationName")}
+                      name="stationName"
+                      placeholder="Station Name"
                     />
                     <span className="text-danger">
                       {errors.description?.message}
@@ -83,15 +116,15 @@ const AddAttraction = () => {
                 <div className="col-lg-4 mb-5">
                   <div className="form-group">
                     <label>
-                      <strong>Attraction Description</strong>
+                      <strong>City</strong>
                       <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("description")}
-                      name="description"
-                      placeholder="Description"
+                      {...register("city")}
+                      name="city"
+                      placeholder="City Description"
                     />
                     <span className="text-danger">
                       {errors.description?.message}
@@ -125,4 +158,4 @@ const AddAttraction = () => {
   );
 };
 
-export default AddAttraction;
+export default AddRoute;

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 // import useAxios from "../../Services/useAxios";
 import swal from "sweetalert";
+import { useSelector } from "react-redux";
 
 const RouteList = () => {
   const [rooms, setRooms] = useState([]);
@@ -13,6 +14,7 @@ const RouteList = () => {
   let navigate = useNavigate();
   const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const role = useSelector((state) => state.auth.role);
 
   const cols = [
     {
@@ -86,23 +88,20 @@ const RouteList = () => {
   };
   return (
     <>
-      {/* <Box
-        sx={{ display: { xs: "flex", justifyContent: "flex-end" } }}
-        className="menu-box-items w-100"
-      >
-        <Link to={"/add-room"}>
-          <Button
-            variant="contained"
-            margin="normal"
-            className="add-country-btn d-flex mt-3 me-5 mb-3 justify-content-end"
+      <div className="d-flex justify-content-between align-items-center ms-5 me-5">
+        <p className="crudTitle">Station List</p>
+        {role === "Admin" ? (
+          <Link
+            to="/add-route"
+            className="btn btn-md btn-outline-primary w-25 mb-3 rounded-0"
           >
-            Add New Room
-          </Button>
-        </Link>
-      </Box> */}
-      <div className="ms-4">
-        <h2 className="fw-lighter text-secondary">List of Routes</h2>
+            <i className="fa fa-plus" aria-hidden="true"></i> Create
+          </Link>
+        ) : (
+          <div></div>
+        )}
       </div>
+
       <div className="container row w-100 mw-100 ">
         <div className="content col9 w-100">
           <div className="add-country-btn d-flex justify-content-end"></div>
