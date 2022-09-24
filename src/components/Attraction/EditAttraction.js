@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // import { makeStyles } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import MainMenu from "../MainMenu/MainMenu";
 import * as travelService from "../../services/TravelService";
 // import { yupResolver } from "@hookform/resolvers/yup";
 
-const AddStation = () => {
-  localStorage.setItem("activeTab", 2);
+const EditAttraction = () => {
   const [loading, setIsLoading] = useState(false);
   let navigate = useNavigate();
   const [attraction, setAttraction] = useState([]);
-
+  const [file, setFile] = useState(null);
+  const attractionid = useParams();
   const schema = yup.object({
     description: yup
       .string()
@@ -28,21 +28,45 @@ const AddStation = () => {
   } = useForm({
     // resolver: yupResolver(schema),
   });
-  useEffect(() => {}, []);
+  useEffect(() => {
+    travelService.GetAttractionById(attractionid.id).then((response) => {
+      const fields = [
+        "id",
+        "attractionName",
+        "location",
+        "description",
+        "image",
+      ];
+      fields.forEach((field) => setValue(field, response.data[field]));
+    });
+  }, []);
 
   const onSubmit = (event) => {
-    travelService.AddStation(event).then((response) => {
-      navigate("/admin");
-    });
     setIsLoading(true);
+    travelService
+      .UpdateAttraction(
+        event.id,
+        event.attractionName,
+        event.location,
+        event.description,
+        event.documentName,
+        file
+      )
+      .then((response) => {
+        navigate("/");
+      });
   };
 
+  const saveFile = (e) => {
+    setFile(e.target.files[0]);
+    setValue("documentName", e.target.files[0].name);
+  };
   return (
     <>
       <MainMenu />
       <div className="form-container card-rounded-1 m-4 mt-5">
         <div className="form-header bg-primary rounded-3 p-3 ">
-          <h3 className="text-light"> Add new Station</h3>
+          <h3 className="text-light"> Add new Attraction</h3>
         </div>
 
         <div className="card rounded-2 mt-2">
@@ -52,15 +76,15 @@ const AddStation = () => {
                 <div className="col-lg-4 mb-5">
                   <div className="form-group">
                     <label>
-                      <strong>Station Name</strong>
+                      <strong>Attraction Name</strong>
                       <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("stationName")}
-                      name="stationName"
-                      placeholder="Station Name"
+                      {...register("attractionName")}
+                      name="attractionName"
+                      placeholder="Attraction Name"
                     />
                     <span className="text-danger">
                       {errors.description?.message}
@@ -70,51 +94,15 @@ const AddStation = () => {
                 <div className="col-lg-4 mb-5">
                   <div className="form-group">
                     <label>
-                      <strong>Longitude</strong>
-                      <span className="text-danger fw-bold">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control rounded-0"
-                      {...register("longitude")}
-                      name="longitude"
-                      placeholder="Longitude Description"
-                    />
-                    <span className="text-danger">
-                      {errors.description?.message}
-                    </span>
-                  </div>
-                </div>
-                <div className="col-lg-4 mb-5">
-                  <div className="form-group">
-                    <label>
-                      <strong>Latitude</strong>
-                      <span className="text-danger fw-bold">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control rounded-0"
-                      {...register("latitude")}
-                      name="latitude"
-                      placeholder="Latitude Description"
-                    />
-                    <span className="text-danger">
-                      {errors.description?.message}
-                    </span>
-                  </div>
-                </div>
-                <div className="col-lg-4 mb-5">
-                  <div className="form-group">
-                    <label>
-                      <strong>Country</strong>
+                      <strong>Location</strong>
                       <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("country")}
-                      name="country"
-                      placeholder="Country Name"
+                      {...register("location")}
+                      name="location"
+                      placeholder="Location Description"
                     />
                     <span className="text-danger">
                       {errors.description?.message}
@@ -124,22 +112,40 @@ const AddStation = () => {
                 <div className="col-lg-4 mb-5">
                   <div className="form-group">
                     <label>
-                      <strong>City</strong>
+                      <strong>Attraction Description</strong>
                       <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("city")}
-                      name="city"
-                      placeholder="City Name"
+                      {...register("description")}
+                      name="description"
+                      placeholder="Description"
                     />
                     <span className="text-danger">
                       {errors.description?.message}
                     </span>
                   </div>
                 </div>
-
+                <div className="col-lg-4 mb-5">
+                  <div className="form-group">
+                    <label>
+                      <strong>Attraction Image</strong>
+                      <span className="text-danger fw-bold">*</span>
+                    </label>
+                    <input
+                      type="file"
+                      className="form-control rounded-0"
+                      {...register("file")}
+                      name="file"
+                      placeholder="Image"
+                      onChange={saveFile}
+                    />
+                    <span className="text-danger">
+                      {errors.documentName?.message}
+                    </span>
+                  </div>
+                </div>
                 <div className="col-lg-12">
                   <div className="d-flex justify-content-end  form-group mt-3">
                     <button
@@ -166,4 +172,4 @@ const AddStation = () => {
   );
 };
 
-export default AddStation;
+export default EditAttraction;

@@ -21,7 +21,9 @@ import * as actions from "../../store/actions";
 import MainMenu from "../MainMenu/MainMenu";
 
 const AdminSideBar = () => {
-  const [value, setValue] = useState(0);
+  const activeTab = localStorage.getItem("activeTab");
+  console.log(typeof activeTab);
+  const [value, setValue] = useState(activeTab.toString());
   const name1 = useSelector((state) => state.auth.name);
   const dispatch = useDispatch();
   const storage = localStorage.getItem("persist:root");
@@ -51,7 +53,7 @@ const AdminSideBar = () => {
   };
   return (
     <>
-      <MainMenu />
+      <MainMenu title="Admin Dashboard" />
       <div className="main mt-3">
         <div className="side-bar-elements bg-light sidebar col-sm w-25 border rounded  ms-4">
           <Box orientation="vertical">
@@ -64,8 +66,8 @@ const AdminSideBar = () => {
               variant="scrollable"
               scrollButtons="auto"
             >
-              <Tab label="Attractions" {...a11yProps(0)} />
-              <Tab label="Stations" {...a11yProps(1)} />
+              <Tab label="Attractions" {...a11yProps(activeTab)} />
+              <Tab label="Stations" {...a11yProps(activeTab)} />
               <Tab label="Routes" {...a11yProps(2)} />
             </Tabs>
           </Box>

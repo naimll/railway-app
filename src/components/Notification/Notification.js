@@ -80,6 +80,7 @@ export const Notification = () => {
         userConnection.on("sendToUser", (test) => {
           console.log(test);
           setNotification(test);
+
           NotificationManager.info(
             test.notificationMessage,
             test.notificationSubject
@@ -131,20 +132,34 @@ export const Notification = () => {
         onClose={handleClose}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "center",
         }}
         className="mw-50"
       >
         {notification.map((item, i) => {
           return (
             <>
-              <CardContent className="mb-0 pb-0">
-                <Typography color="text.secondary" className="text-primary">
-                  {item.subject}
+              <CardContent
+                className={
+                  item.isRead === true
+                    ? "mb-0 pb-0 bg-secondary"
+                    : "mb-0 pb-0 bg-light"
+                }
+              >
+                <Typography color="text.secondary" className="text-dark">
+                  {item.notificationSubject}
                 </Typography>
-                <Typography variant="body2">{item.body}</Typography>
+                <Typography variant="body2">
+                  {item.notificationMessage}
+                </Typography>
               </CardContent>
-              <CardActions className="border-bottom-1 mt-0">
+              <CardActions
+                className={
+                  item.isRead === true
+                    ? "border-bottom-1 mt-0 bg-secondary"
+                    : "border-bottom-1 mt-0 bg-secondary"
+                }
+              >
                 <Button size="small" className="border-bottom-1">
                   Learn More
                 </Button>

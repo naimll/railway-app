@@ -7,7 +7,7 @@ import * as actions from "../../store/actions";
 import * as notificationService from "../../services/notificationService";
 import { useEffect } from "react";
 
-const MainMenu = () => {
+const MainMenu = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const name1 = useSelector((state) => state.auth.name);
@@ -37,7 +37,7 @@ const MainMenu = () => {
   };
   return (
     <div className="bg-primary w-100 main-header text-light d-flex justify-content-between">
-      <h3 className="align-middle">Client Dashboard</h3>
+      <h3 className="align-middle">{props.title}</h3>
       <div className="d-flex">
         <Notification />
         <div className="mx-2">

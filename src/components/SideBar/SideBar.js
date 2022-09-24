@@ -52,7 +52,7 @@ const SideBar = () => {
   };
   return (
     <>
-      <MainMenu />
+      <MainMenu title="Client Dashboard" />
       <div className="main mt-3">
         <div className="side-bar-elements bg-light sidebar col-sm w-25 border rounded  ms-4">
           <Box orientation="vertical">

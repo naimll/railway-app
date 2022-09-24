@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import MainMenu from "../MainMenu/MainMenu";
+import * as travelService from "../../services/TravelService";
 // import { yupResolver } from "@hookform/resolvers/yup";
 
 const AddAttraction = () => {
   const [loading, setIsLoading] = useState(false);
   let navigate = useNavigate();
   const [attraction, setAttraction] = useState([]);
+  const [file, setFile] = useState(null);
 
   const schema = yup.object({
     description: yup
@@ -30,8 +32,22 @@ const AddAttraction = () => {
 
   const onSubmit = (event) => {
     setIsLoading(true);
+    travelService
+      .AddAttraction(
+        event.attraction,
+        event.location,
+        event.description,
+        file
+      )
+      .then((response) => {
+        console.log(response.data);
+      });
   };
 
+  const saveFile = (e) => {
+    setFile(e.target.files[0]);
+    // setValue("documentName", e.target.files[0].name);
+  };
   return (
     <>
       <MainMenu />
@@ -53,7 +69,7 @@ const AddAttraction = () => {
                     <input
                       type="text"
                       className="form-control rounded-0"
-                      {...register("attractionName")}
+                      {...register("attraction")}
                       name="attractionName"
                       placeholder="Attraction Name"
                     />
@@ -98,7 +114,25 @@ const AddAttraction = () => {
                     </span>
                   </div>
                 </div>
-
+                <div className="col-lg-4 mb-5">
+                  <div className="form-group">
+                    <label>
+                      <strong>Attraction Image</strong>
+                      <span className="text-danger fw-bold">*</span>
+                    </label>
+                    <input
+                      type="file"
+                      className="form-control rounded-0"
+                      {...register("file")}
+                      name="file"
+                      placeholder="Image"
+                      onChange={saveFile}
+                    />
+                    <span className="text-danger">
+                      {errors.documentName?.message}
+                    </span>
+                  </div>
+                </div>
                 <div className="col-lg-12">
                   <div className="d-flex justify-content-end  form-group mt-3">
                     <button

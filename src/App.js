@@ -16,6 +16,7 @@ import AddAttraction from "./components/Attraction/AddAttraction";
 import { useSelector } from "react-redux";
 import AddStation from "./components/Stations/AddStation";
 import AddRoute from "./components/Route/AddRoute";
+import EditAttraction from "./components/Attraction/EditAttraction";
 
 function App() {
   const role = useSelector((state) => state.auth.role);
@@ -50,6 +51,14 @@ function App() {
         </Route>
         <Route exact element={<PrivateRoute role="Admin" />}>
           <Route path="/add-route" element={<AddRoute />} exact />
+        </Route>
+
+        <Route exact element={<PrivateRoute role="Admin" />}>
+          <Route
+            path="/edit-attraction/:id"
+            element={<EditAttraction />}
+            exact
+          />
         </Route>
       </Routes>
     </main>
